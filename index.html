@@ -236,6 +236,50 @@ tailwind.config={
   .theme-btn:not(.active) {
       color: var(--on-surface-variant);
   }
+
+  /* Circuit Tooltip & Hover effects */
+  .circuit-gate {
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+  }
+  .circuit-gate:hover {
+      transform: scale(1.05);
+      border-width: 2px;
+      box-shadow: 0 0 8px currentColor;
+      z-index: 30;
+  }
+  .circuit-gate .tooltip {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.2s;
+      position: absolute;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      z-index: 40;
+  }
+  .circuit-gate:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+  }
+
+  /* Qubit row highlight */
+  .qubit-row {
+      transition: background-color 0.2s ease;
+  }
+  .qubit-row:hover {
+      background-color: var(--surface-container);
+  }
+
+  /* Active stage animation */
+  .stage-active {
+      border-color: currentColor !important;
+      border-width: 2px !important;
+      box-shadow: 0 0 10px currentColor !important;
+      transform: scale(1.05);
+      z-index: 30;
+  }
 </style>
 <script>
     function updateTheme(theme) {
@@ -965,78 +1009,293 @@ tailwind.config={
 </div>
 </div>
 </section>
-<!-- QAOA & Circuit -->
+<!-- QAOA & Circuit Dashboard -->
 <section class="px-margin py-xl bg-surface-container-low border-t border-outline-variant/30 theme-transition" id="qaoa">
 <div class="max-w-7xl mx-auto w-full flex flex-col gap-xl">
+<div class="flex flex-col md:flex-row gap-lg justify-between items-start w-full">
 <div class="flex flex-col gap-md max-w-3xl">
 <h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface">Quantum Approximate Optimization Algorithm</h2>
 <p class="font-body-md text-body-md text-on-surface-variant">QAOA is a hybrid quantum-classical algorithm: the circuit is quantum, while a classical optimizer tunes its parameters. It uses alternating layers of a Cost Hamiltonian (derived from our QUBO) and a Mixer Hamiltonian to evolve an initial superposition state towards the optimal ground state. The classical optimizer adjusts γ and β to minimize the expected value of the Cost Hamiltonian.</p>
 </div>
+<div class="flex flex-col gap-sm p-md border border-outline-variant bg-surface theme-transition w-full max-w-sm">
+<h4 class="font-data-sm text-on-surface uppercase border-b border-outline-variant/50 pb-xs">Parameter Controls</h4>
+<div class="flex flex-col gap-1">
+<label class="flex justify-between items-center font-data-sm text-on-surface-variant text-[10px]">
+<span>γ (Gamma)</span>
+<span class="text-tertiary" id="gamma-val">1.0</span>
+</label>
+<input class="accent-tertiary" id="gamma-slider" max="2" min="0" step="0.1" type="range" value="1.0"/>
+</div>
+<div class="flex flex-col gap-1 mt-2">
+<label class="flex justify-between items-center font-data-sm text-on-surface-variant text-[10px]">
+<span>β (Beta)</span>
+<span class="text-secondary" id="beta-val">0.5</span>
+</label>
+<input class="accent-secondary" id="beta-slider" max="1" min="0" step="0.05" type="range" value="0.5"/>
+</div>
+</div>
+</div>
+<div class="flex justify-between items-end border-b border-outline-variant/50 pb-2 theme-transition">
+<button class="flex items-center gap-2 px-md py-sm bg-primary text-on-primary font-data-sm uppercase tracking-wider hover:bg-primary-fixed transition-colors" id="btn-play-circuit">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+<span>Play Circuit</span>
+</button>
+<span class="font-data-sm text-on-surface-variant text-[10px] flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span> p=2 Layer shown
+        </span>
+</div>
 <!-- Circuit Diagram Visualization -->
 <div class="w-full overflow-x-auto border border-outline-variant bg-surface p-lg hide-scrollbar relative theme-transition">
-<div class="absolute top-2 right-2 text-on-surface-variant font-data-sm text-[10px] flex items-center gap-1">
-<span class="w-2 h-2 rounded-full bg-primary inline-block"></span> p=2 Layer shown
-                </div>
-<div class="min-w-[800px] flex flex-col gap-md font-data-sm text-on-surface-variant py-md">
-<!-- Qubit Lines -->
-<div class="flex items-center gap-md">
-<div class="w-8 text-right font-data-md">|0⟩</div>
+<div class="min-w-[800px] flex flex-col gap-md font-data-sm text-on-surface-variant py-md" id="circuit-container">
+<!-- Qubit Line 1 -->
+<div class="flex items-center gap-md qubit-row p-1 -mx-1 rounded" data-qubit="q1" data-region="Rajasthan">
+<div class="w-8 text-right font-data-md qubit-label">|0⟩</div>
 <div class="w-8 h-[1px] bg-outline-variant/50 theme-transition"></div>
-<div class="w-8 h-8 border border-primary text-primary flex items-center justify-center bg-primary/5 theme-transition font-data-md">H</div>
+<div class="circuit-gate gate-init w-8 h-8 border border-primary text-primary flex items-center justify-center bg-primary/5 theme-transition font-data-md relative" data-desc="Places all qubits into equal superposition." data-gate="H">
+    H
+    <span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Places all qubits into equal superposition.</span>
+</div>
 <div class="w-8 h-[1px] bg-outline-variant/50 theme-transition"></div>
 <!-- Cost Layer -->
 <div class="flex-1 h-[1px] bg-outline-variant/50 relative flex items-center justify-around border-y border-transparent theme-transition">
-<div class="w-16 h-8 border border-tertiary text-tertiary flex items-center justify-center bg-tertiary/5 text-[10px] theme-transition font-data-sm">Cost(γ₁)</div>
-<div class="w-16 h-8 border border-secondary text-secondary flex items-center justify-center bg-secondary/5 text-[10px] theme-transition font-data-sm">Mixer(β₁)</div>
-<div class="w-16 h-8 border border-tertiary text-tertiary flex items-center justify-center bg-tertiary/5 text-[10px] theme-transition font-data-sm">Cost(γ₂)</div>
-<div class="w-16 h-8 border border-secondary text-secondary flex items-center justify-center bg-secondary/5 text-[10px] theme-transition font-data-sm">Mixer(β₂)</div>
+<div class="circuit-gate gate-cost1 w-16 h-8 border border-tertiary text-tertiary flex items-center justify-center bg-tertiary/5 text-[10px] theme-transition font-data-sm relative" data-desc="Applies the optimization cost from the QUBO." data-gate="Cost(γ₁)">
+<span class="gamma-label">Cost(1.0)</span>
+<span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Applies the optimization cost from the QUBO.</span>
+</div>
+<div class="circuit-gate gate-mixer1 w-16 h-8 border border-secondary text-secondary flex items-center justify-center bg-secondary/5 text-[10px] theme-transition font-data-sm relative" data-desc="Redistributes probability between candidate solutions." data-gate="Mixer(β₁)">
+<span class="beta-label">Mixer(0.5)</span>
+<span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Redistributes probability between candidate solutions.</span>
+</div>
+<div class="circuit-gate gate-cost2 w-16 h-8 border border-tertiary text-tertiary flex items-center justify-center bg-tertiary/5 text-[10px] theme-transition font-data-sm relative" data-desc="Applies the optimization cost from the QUBO." data-gate="Cost(γ₂)">
+<span class="gamma-label">Cost(1.0)</span>
+<span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Applies the optimization cost from the QUBO.</span>
+</div>
+<div class="circuit-gate gate-mixer2 w-16 h-8 border border-secondary text-secondary flex items-center justify-center bg-secondary/5 text-[10px] theme-transition font-data-sm relative" data-desc="Redistributes probability between candidate solutions." data-gate="Mixer(β₂)">
+<span class="beta-label">Mixer(0.5)</span>
+<span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Redistributes probability between candidate solutions.</span>
+</div>
 </div>
 <!-- Measurement Layer -->
 <div class="w-8 h-[1px] bg-outline-variant/50 theme-transition"></div>
-<div class="w-8 h-8 border border-on-surface-variant text-on-surface-variant flex items-center justify-center bg-surface-container theme-transition font-data-md">M</div>
+<div class="circuit-gate gate-measure w-8 h-8 border border-on-surface-variant text-on-surface-variant flex items-center justify-center bg-surface-container theme-transition font-data-md relative" data-desc="Measures the final quantum state." data-gate="M">
+    M
+    <span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Measures the final quantum state.</span>
 </div>
-<!-- Repeat for 4 more lines to imply 5 qubits, slightly faded to imply pattern -->
-<div class="flex items-center gap-md opacity-70">
-<div class="w-8 text-right font-data-md">|0⟩</div>
+<div class="w-24 text-left font-data-sm text-[10px] text-primary opacity-0 transition-opacity row-label ml-2">q1: Rajasthan</div>
+</div>
+<!-- Qubit Line 2 -->
+<div class="flex items-center gap-md qubit-row p-1 -mx-1 rounded" data-qubit="q2" data-region="Gujarat">
+<div class="w-8 text-right font-data-md qubit-label">|0⟩</div>
 <div class="w-8 h-[1px] bg-outline-variant/50 theme-transition"></div>
-<div class="w-8 h-8 border border-primary text-primary flex items-center justify-center bg-primary/5 theme-transition font-data-md">H</div>
+<div class="circuit-gate gate-init w-8 h-8 border border-primary text-primary flex items-center justify-center bg-primary/5 theme-transition font-data-md relative" data-desc="Places all qubits into equal superposition." data-gate="H">
+    H
+    <span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Places all qubits into equal superposition.</span>
+</div>
 <div class="w-8 h-[1px] bg-outline-variant/50 theme-transition"></div>
 <div class="flex-1 h-[1px] bg-outline-variant/50 relative flex items-center justify-around border-y border-transparent theme-transition">
-<div class="w-16 h-8 border border-tertiary text-tertiary flex items-center justify-center bg-tertiary/5 text-[10px] theme-transition font-data-sm">Cost(γ₁)</div>
-<div class="w-16 h-8 border border-secondary text-secondary flex items-center justify-center bg-secondary/5 text-[10px] theme-transition font-data-sm">Mixer(β₁)</div>
-<div class="w-16 h-8 border border-tertiary text-tertiary flex items-center justify-center bg-tertiary/5 text-[10px] theme-transition font-data-sm">Cost(γ₂)</div>
-<div class="w-16 h-8 border border-secondary text-secondary flex items-center justify-center bg-secondary/5 text-[10px] theme-transition font-data-sm">Mixer(β₂)</div>
+<div class="circuit-gate gate-cost1 w-16 h-8 border border-tertiary text-tertiary flex items-center justify-center bg-tertiary/5 text-[10px] theme-transition font-data-sm relative" data-desc="Applies the optimization cost from the QUBO." data-gate="Cost(γ₁)">
+<span class="gamma-label">Cost(1.0)</span>
+<span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Applies the optimization cost from the QUBO.</span>
+</div>
+<div class="circuit-gate gate-mixer1 w-16 h-8 border border-secondary text-secondary flex items-center justify-center bg-secondary/5 text-[10px] theme-transition font-data-sm relative" data-desc="Redistributes probability between candidate solutions." data-gate="Mixer(β₁)">
+<span class="beta-label">Mixer(0.5)</span>
+<span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Redistributes probability between candidate solutions.</span>
+</div>
+<div class="circuit-gate gate-cost2 w-16 h-8 border border-tertiary text-tertiary flex items-center justify-center bg-tertiary/5 text-[10px] theme-transition font-data-sm relative" data-desc="Applies the optimization cost from the QUBO." data-gate="Cost(γ₂)">
+<span class="gamma-label">Cost(1.0)</span>
+<span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Applies the optimization cost from the QUBO.</span>
+</div>
+<div class="circuit-gate gate-mixer2 w-16 h-8 border border-secondary text-secondary flex items-center justify-center bg-secondary/5 text-[10px] theme-transition font-data-sm relative" data-desc="Redistributes probability between candidate solutions." data-gate="Mixer(β₂)">
+<span class="beta-label">Mixer(0.5)</span>
+<span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Redistributes probability between candidate solutions.</span>
+</div>
 </div>
 <div class="w-8 h-[1px] bg-outline-variant/50 theme-transition"></div>
-<div class="w-8 h-8 border border-on-surface-variant text-on-surface-variant flex items-center justify-center bg-surface-container theme-transition font-data-md">M</div>
+<div class="circuit-gate gate-measure w-8 h-8 border border-on-surface-variant text-on-surface-variant flex items-center justify-center bg-surface-container theme-transition font-data-md relative" data-desc="Measures the final quantum state." data-gate="M">
+    M
+    <span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Measures the final quantum state.</span>
 </div>
-<div class="flex items-center justify-center w-full py-2 opacity-50">
+<div class="w-24 text-left font-data-sm text-[10px] text-primary opacity-0 transition-opacity row-label ml-2">q2: Gujarat</div>
+</div>
+<div class="flex items-center justify-center w-full py-2 opacity-50 qubit-row p-1 -mx-1 rounded" data-qubit="q3" data-region="Karnataka">
 <span class="material-symbols-outlined text-[16px]">more_vert</span>
+<div class="w-24 text-left font-data-sm text-[10px] text-primary opacity-0 transition-opacity row-label absolute right-0">q3: Karnataka</div>
 </div>
-<div class="flex items-center gap-md opacity-40">
-<div class="w-8 text-right font-data-md">|0⟩</div>
+<!-- Qubit Line 5 (Implied) -->
+<div class="flex items-center gap-md qubit-row p-1 -mx-1 rounded opacity-40 hover:opacity-100 transition-opacity" data-qubit="q5" data-region="Andhra Pradesh">
+<div class="w-8 text-right font-data-md qubit-label">|0⟩</div>
 <div class="w-8 h-[1px] bg-outline-variant/50 theme-transition"></div>
-<div class="w-8 h-8 border border-primary text-primary flex items-center justify-center bg-primary/5 theme-transition font-data-md">H</div>
+<div class="circuit-gate gate-init w-8 h-8 border border-primary text-primary flex items-center justify-center bg-primary/5 theme-transition font-data-md relative" data-desc="Places all qubits into equal superposition." data-gate="H">
+    H
+    <span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Places all qubits into equal superposition.</span>
+</div>
 <div class="w-8 h-[1px] bg-outline-variant/50 theme-transition"></div>
 <div class="flex-1 h-[1px] bg-outline-variant/50 relative flex items-center justify-around border-y border-transparent theme-transition">
-<div class="w-16 h-8 border border-tertiary text-tertiary flex items-center justify-center bg-tertiary/5 text-[10px] theme-transition font-data-sm">Cost(γ₁)</div>
-<div class="w-16 h-8 border border-secondary text-secondary flex items-center justify-center bg-secondary/5 text-[10px] theme-transition font-data-sm">Mixer(β₁)</div>
-<div class="w-16 h-8 border border-tertiary text-tertiary flex items-center justify-center bg-tertiary/5 text-[10px] theme-transition font-data-sm">Cost(γ₂)</div>
-<div class="w-16 h-8 border border-secondary text-secondary flex items-center justify-center bg-secondary/5 text-[10px] theme-transition font-data-sm">Mixer(β₂)</div>
+<div class="circuit-gate gate-cost1 w-16 h-8 border border-tertiary text-tertiary flex items-center justify-center bg-tertiary/5 text-[10px] theme-transition font-data-sm relative" data-desc="Applies the optimization cost from the QUBO." data-gate="Cost(γ₁)">
+<span class="gamma-label">Cost(1.0)</span>
+<span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Applies the optimization cost from the QUBO.</span>
+</div>
+<div class="circuit-gate gate-mixer1 w-16 h-8 border border-secondary text-secondary flex items-center justify-center bg-secondary/5 text-[10px] theme-transition font-data-sm relative" data-desc="Redistributes probability between candidate solutions." data-gate="Mixer(β₁)">
+<span class="beta-label">Mixer(0.5)</span>
+<span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Redistributes probability between candidate solutions.</span>
+</div>
+<div class="circuit-gate gate-cost2 w-16 h-8 border border-tertiary text-tertiary flex items-center justify-center bg-tertiary/5 text-[10px] theme-transition font-data-sm relative" data-desc="Applies the optimization cost from the QUBO." data-gate="Cost(γ₂)">
+<span class="gamma-label">Cost(1.0)</span>
+<span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Applies the optimization cost from the QUBO.</span>
+</div>
+<div class="circuit-gate gate-mixer2 w-16 h-8 border border-secondary text-secondary flex items-center justify-center bg-secondary/5 text-[10px] theme-transition font-data-sm relative" data-desc="Redistributes probability between candidate solutions." data-gate="Mixer(β₂)">
+<span class="beta-label">Mixer(0.5)</span>
+<span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Redistributes probability between candidate solutions.</span>
+</div>
 </div>
 <div class="w-8 h-[1px] bg-outline-variant/50 theme-transition"></div>
-<div class="w-8 h-8 border border-on-surface-variant text-on-surface-variant flex items-center justify-center bg-surface-container theme-transition font-data-md">M</div>
+<div class="circuit-gate gate-measure w-8 h-8 border border-on-surface-variant text-on-surface-variant flex items-center justify-center bg-surface-container theme-transition font-data-md relative" data-desc="Measures the final quantum state." data-gate="M">
+    M
+    <span class="tooltip bg-surface-container border border-outline-variant text-on-surface text-[10px] px-2 py-1 rounded shadow-lg">Measures the final quantum state.</span>
+</div>
+<div class="w-24 text-left font-data-sm text-[10px] text-primary opacity-0 transition-opacity row-label ml-2">q5: Andhra Pradesh</div>
 </div>
 </div>
 <!-- Labels -->
 <div class="min-w-[800px] flex gap-md mt-sm border-t border-outline-variant/50 pt-sm theme-transition">
-<div class="w-[88px] text-center font-data-sm text-[10px] text-primary">Initialization</div>
-<div class="flex-1 text-center font-data-sm text-[10px] text-tertiary">Alternating Cost and Mixer Layers</div>
-<div class="w-8 text-center font-data-sm text-[10px] text-on-surface-variant">Read</div>
+<div class="w-[88px] text-center font-data-sm text-[10px] text-primary transition-colors stage-label-init">Initialization</div>
+<div class="flex-1 flex justify-around font-data-sm text-[10px] text-tertiary">
+<span class="stage-label-cost1 transition-colors">Cost Layer 1</span>
+<span class="stage-label-mixer1 text-secondary transition-colors">Mixer Layer 1</span>
+<span class="stage-label-cost2 transition-colors">Cost Layer 2</span>
+<span class="stage-label-mixer2 text-secondary transition-colors">Mixer Layer 2</span>
 </div>
+<div class="w-32 text-left pl-4 font-data-sm text-[10px] text-on-surface-variant transition-colors stage-label-measure">Measurement</div>
+</div>
+</div>
+<!-- Gate Detail Panel (Hidden by default) -->
+<div class="hidden mt-md p-md border border-outline-variant bg-surface-container theme-transition" id="gate-detail-panel">
+<div class="flex justify-between items-start border-b border-outline-variant/50 pb-sm mb-sm">
+<h4 class="font-data-md text-primary uppercase" id="detail-gate-name">Gate Detail</h4>
+<button class="text-on-surface-variant hover:text-on-surface" id="close-detail-panel">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-on-surface-variant" id="detail-gate-desc">Select a gate to see its details.</p>
+</div>
+<!-- Result Preview Card -->
+<div class="flex flex-col md:flex-row gap-lg bg-surface-container-low border border-outline-variant p-lg theme-transition mt-lg">
+<div class="flex-1 flex flex-col gap-sm border-b md:border-b-0 md:border-r border-outline-variant/50 pb-md md:pb-0 md:pr-md theme-transition">
+<span class="font-data-sm text-on-surface-variant uppercase tracking-wider">Optimal State</span>
+<span class="font-data-lg text-primary text-xl">Rajasthan + Gujarat</span>
+</div>
+<div class="flex-1 flex flex-col gap-sm">
+<span class="font-data-sm text-on-surface-variant uppercase tracking-wider">QAOA Probability</span>
+<span class="font-data-lg text-tertiary text-xl">61.2%</span>
+<span class="font-data-sm text-on-surface-variant text-[10px]">Measurement likelihood at p=2</span>
+</div>
+</div>
+<div class="mt-sm inline-flex items-center gap-2 bg-surface-variant px-3 py-2 border border-outline-variant text-on-surface-variant font-data-sm w-full lg:w-auto">
+<span class="material-symbols-outlined text-[16px] text-tertiary">info</span>
+<span><strong>Research Note:</strong> 61.2% is a measurement probability derived from state-vector simulation, not an absolute accuracy metric. No quantum advantage is claimed.</span>
 </div>
 </div>
 </section>
+<!-- Dashboard Interactive Script -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Parameter Sliders
+    const gammaSlider = document.getElementById('gamma-slider');
+    const betaSlider = document.getElementById('beta-slider');
+    const gammaVal = document.getElementById('gamma-val');
+    const betaVal = document.getElementById('beta-val');
+    const gammaLabels = document.querySelectorAll('.gamma-label');
+    const betaLabels = document.querySelectorAll('.beta-label');
+
+    gammaSlider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value).toFixed(1);
+        gammaVal.textContent = val;
+        gammaLabels.forEach(l => l.textContent = `Cost(${val})`);
+    });
+
+    betaSlider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value).toFixed(2);
+        betaVal.textContent = val;
+        betaLabels.forEach(l => l.textContent = `Mixer(${val})`);
+    });
+
+    // Row Hover Effects
+    const qubitRows = document.querySelectorAll('.qubit-row');
+    qubitRows.forEach(row => {
+        row.addEventListener('mouseenter', () => {
+            const label = row.querySelector('.row-label');
+            if(label) label.classList.remove('opacity-0');
+        });
+        row.addEventListener('mouseleave', () => {
+            const label = row.querySelector('.row-label');
+            if(label) label.classList.add('opacity-0');
+        });
+    });
+
+    // Gate Click Details
+    const gates = document.querySelectorAll('.circuit-gate');
+    const detailPanel = document.getElementById('gate-detail-panel');
+    const detailName = document.getElementById('detail-gate-name');
+    const detailDesc = document.getElementById('detail-gate-desc');
+    const closeDetailBtn = document.getElementById('close-detail-panel');
+
+    gates.forEach(gate => {
+        gate.addEventListener('click', () => {
+            detailName.textContent = gate.dataset.gate;
+            detailDesc.textContent = gate.dataset.desc + " Its implementation in QAOA is crucial for the phase separation and mixing operations in the p=2 pipeline.";
+            detailPanel.classList.remove('hidden');
+        });
+    });
+
+    closeDetailBtn.addEventListener('click', () => {
+        detailPanel.classList.add('hidden');
+    });
+
+    // Animation Sequence
+    const playBtn = document.getElementById('btn-play-circuit');
+    const stages = [
+        { gates: '.gate-init', label: '.stage-label-init' },
+        { gates: '.gate-cost1', label: '.stage-label-cost1' },
+        { gates: '.gate-mixer1', label: '.stage-label-mixer1' },
+        { gates: '.gate-cost2', label: '.stage-label-cost2' },
+        { gates: '.gate-mixer2', label: '.stage-label-mixer2' },
+        { gates: '.gate-measure', label: '.stage-label-measure' }
+    ];
+
+    let isPlaying = false;
+
+    playBtn.addEventListener('click', async () => {
+        if(isPlaying) return;
+        isPlaying = true;
+        const icon = playBtn.querySelector('.material-symbols-outlined');
+        icon.textContent = 'pause';
+        
+        const clearActive = () => {
+            document.querySelectorAll('.circuit-gate, [class^="stage-label-"]').forEach(el => {
+                el.classList.remove('stage-active', 'font-bold');
+            });
+        };
+
+        clearActive();
+
+        for (const stage of stages) {
+            const gateEls = document.querySelectorAll(stage.gates);
+            const labelEl = document.querySelector(stage.label);
+            
+            gateEls.forEach(el => el.classList.add('stage-active'));
+            if(labelEl) labelEl.classList.add('font-bold');
+            
+            await new Promise(r => setTimeout(r, 800));
+            
+            gateEls.forEach(el => el.classList.remove('stage-active'));
+            if(labelEl) labelEl.classList.remove('font-bold');
+        }
+        
+        icon.textContent = 'play_arrow';
+        isPlaying = false;
+    });
+});
+</script>
 <!-- Results Section -->
 <section class="px-margin py-xl bg-surface border-t border-outline-variant/30 theme-transition" id="results">
 <div class="max-w-7xl mx-auto w-full flex flex-col gap-lg">
