@@ -366,6 +366,8 @@ tailwind.config={
 </div>
 <div class="hidden lg:flex items-center gap-lg">
 <nav class="flex gap-md text-on-surface-variant" data-active-classes="text-primary font-bold">
+<a class="font-data-sm text-data-sm hover:text-on-surface transition-colors" data-path="home" href="#home">HOME</a>
+<a class="font-data-sm text-data-sm hover:text-on-surface transition-colors" data-path="about" href="#about">ABOUT</a>
 <a class="font-data-sm text-data-sm hover:text-on-surface transition-colors" data-path="problem" href="#problem">PROBLEM</a>
 <a class="font-data-sm text-data-sm hover:text-on-surface transition-colors" data-path="data" href="#data">DATA</a>
 <a class="font-data-sm text-data-sm hover:text-on-surface transition-colors" data-path="qubo" href="#qubo">QUBO</a>
@@ -409,6 +411,8 @@ tailwind.config={
 <div class="lg:hidden hidden bg-surface border-b border-outline-variant/30 px-margin py-md flex-col gap-md absolute w-full shadow-lg shadow-black/10 theme-transition" id="mobile-menu">
 <span class="font-data-sm text-data-sm text-on-surface-variant tracking-widest uppercase border-b border-outline-variant/30 pb-2 mb-2 block theme-transition">CSE AI/ML · SEC B · 2026–2030</span>
 <nav class="flex flex-col gap-md text-on-surface">
+<a class="font-data-sm text-data-sm transition-colors block" href="#home">HOME</a>
+<a class="font-data-sm text-data-sm transition-colors block" href="#about">ABOUT</a>
 <a class="font-data-sm text-data-sm transition-colors block" href="#problem">PROBLEM</a>
 <a class="font-data-sm text-data-sm transition-colors block" href="#data">DATA</a>
 <a class="font-data-sm text-data-sm transition-colors block" href="#qubo">QUBO</a>
@@ -507,32 +511,32 @@ tailwind.config={
         const fmt = (num) => parseFloat(num).toFixed(2);
     </script>
 <!-- Hero Section -->
-<section class="px-margin py-xl lg:py-[120px] bg-surface flex flex-col items-start gap-lg border-b border-outline-variant/30 relative overflow-hidden theme-transition">
+<section class="px-margin py-xl lg:py-[120px] bg-surface flex flex-col items-start gap-lg border-b border-outline-variant/30 relative overflow-hidden theme-transition" id="home">
 <div class="absolute top-0 right-0 w-full h-full opacity-5 pointer-events-none theme-transition" style="background-image: radial-gradient(circle at 80% 20%, var(--primary) 0%, transparent 50%);"></div>
 <div class="flex flex-col gap-sm relative z-10 w-full max-w-4xl">
 <span class="font-data-sm text-data-sm text-primary uppercase tracking-widest">SRM University — CSE / AI &amp; ML Research Project</span>
 <h1 class="font-headline-lg text-headline-lg-mobile lg:text-display text-on-surface text-balance">
-                QUANTUM OPTIMIZATION for Renewable Energy
+                Quantum Optimization for Renewable Energy
             </h1>
 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl mt-sm">
-                From real energy data → QUBO → QAOA → an optimized renewable-energy portfolio.
+                Modeling renewable-energy portfolio selection using real data, QUBO, and QAOA.
             </p>
 </div>
 <div class="grid grid-cols-2 lg:grid-cols-4 w-full gap-[1px] bg-outline-variant/30 relative z-10 mt-md theme-transition">
 <div class="bg-surface p-md flex flex-col gap-xs theme-transition">
-<span class="font-data-sm text-data-sm text-on-surface-variant uppercase">Decision Variables</span>
-<span class="font-data-lg text-data-lg text-on-surface">5 Regions</span>
-</div>
-<div class="bg-surface p-md flex flex-col gap-xs theme-transition">
-<span class="font-data-sm text-data-sm text-on-surface-variant uppercase">Constraint</span>
-<span class="font-data-lg text-data-lg text-on-surface">Select Exactly 2</span>
+<span class="font-data-sm text-data-sm text-on-surface-variant uppercase">Candidate Regions</span>
+<span class="font-data-lg text-data-lg text-on-surface">5</span>
 </div>
 <div class="bg-surface p-md flex flex-col gap-xs theme-transition">
 <span class="font-data-sm text-data-sm text-on-surface-variant uppercase">Classical Optimum</span>
-<span class="font-data-lg text-data-lg text-on-surface text-tertiary" id="hero-optimum">70.13 TWh</span>
+<span class="font-data-lg text-data-lg text-on-surface">Rajasthan + Gujarat</span>
 </div>
 <div class="bg-surface p-md flex flex-col gap-xs theme-transition">
-<span class="font-data-sm text-data-sm text-on-surface-variant uppercase">QAOA Probability (p=2)</span>
+<span class="font-data-sm text-data-sm text-on-surface-variant uppercase">Total Generation</span>
+<span class="font-data-lg text-data-lg text-on-surface text-tertiary">70.13 TWh/year</span>
+</div>
+<div class="bg-surface p-md flex flex-col gap-xs theme-transition">
+<span class="font-data-sm text-data-sm text-on-surface-variant uppercase">QAOA Probability</span>
 <span class="font-data-lg text-data-lg text-on-surface text-primary">61.2%</span>
 </div>
 </div>
@@ -544,6 +548,26 @@ tailwind.config={
 <a class="px-lg py-sm border border-outline text-on-surface font-data-md text-data-md uppercase tracking-wide hover:bg-surface-variant transition-colors inline-flex items-center gap-xs theme-transition" href="#results">
                 View Results
             </a>
+</div>
+</section>
+<!-- About Section -->
+<section class="px-margin py-xl bg-surface-container-low theme-transition border-b border-outline-variant/30" id="about">
+<div class="max-w-7xl mx-auto w-full flex flex-col gap-md">
+<h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface uppercase tracking-wide">ABOUT</h2>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-lg mt-md">
+<div class="flex flex-col gap-sm bg-surface p-md border border-outline-variant/50 theme-transition">
+<h3 class="font-data-md text-on-surface uppercase border-b border-outline-variant/50 pb-xs">About the Project</h3>
+<p class="font-body-md text-on-surface-variant">This project studies how renewable-energy sites can be selected using optimization methods.</p>
+<h3 class="font-data-md text-on-surface uppercase border-b border-outline-variant/50 pb-xs mt-sm">Methodology</h3>
+<p class="font-body-md text-on-surface-variant">Real data → binary variables → QUBO → 5-qubit QAOA → simulation → result</p>
+</div>
+<div class="flex flex-col gap-sm bg-surface p-md border border-outline-variant/50 theme-transition">
+<h3 class="font-data-md text-on-surface uppercase border-b border-outline-variant/50 pb-xs">Scope</h3>
+<p class="font-body-md text-on-surface-variant">The example uses 5 candidate regions and selects exactly 2 regions for maximum annual wind + solar generation.</p>
+<h3 class="font-data-md text-on-surface uppercase border-b border-outline-variant/50 pb-xs mt-sm">Limitation</h3>
+<p class="font-body-md text-on-surface-variant">This is a classical simulation of QAOA for demonstration and learning purposes. This is a proof-of-concept and does not claim quantum advantage.</p>
+</div>
+</div>
 </div>
 </section>
 <!-- Problem Section -->
@@ -1453,6 +1477,10 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: {
                 ...commonOptions,
+                animation: {
+                    duration: 1000,
+                    easing: 'easeOutQuart'
+                },
                 plugins: {
                     ...commonOptions.plugins,
                     tooltip: {
@@ -1483,10 +1511,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const regCtx = document.getElementById('regionsChart').getContext('2d');
         if(regChart) regChart.destroy();
         
-        updateRegionsChartData(colors);
+        updateRegionsChartData(colors, true);
     };
 
-    const updateRegionsChartData = (colors = getColors()) => {
+    const updateRegionsChartData = (colors = getColors(), forceRecreate = false) => {
         let displayData = [...regionsData];
         if (isSorted) {
             displayData.sort((a, b) => b.val - a.val);
@@ -1505,8 +1533,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return d.highlight ? colors.primary : colors.outline;
         });
 
-        if (!regChart) {
-            const commonOptions = compChart.options; // borrow base options
+        if (!regChart || forceRecreate) {
+            if(regChart) regChart.destroy();
+            const commonOptions = compChart ? compChart.options : {}; // borrow base options
             regChart = new Chart(document.getElementById('regionsChart').getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -1523,7 +1552,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     responsive: true,
                     maintainAspectRatio: false,
                     indexAxis: 'y',
-                    animation: { duration: 300 },
+                    animation: { 
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
